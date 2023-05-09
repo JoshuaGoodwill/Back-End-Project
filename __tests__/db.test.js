@@ -13,11 +13,12 @@ afterAll(() => {
 });
 
 describe("/api/categories", () => {
-  test("GET - status: 200 - responds with json object with key of restaurants as array of category objects", () => {
+  test("GET - status: 200 - responds with json object with key of categories and value of array of category objects", () => {
     return request(app)
       .get("/api/categories")
       .expect(200)
       .then((res) => {
+        expect(res.body.categories.length).toBeGreaterThan(0);
         res.body.categories.forEach((category) => {
           expect(Object.keys(category).length).toBe(2);
           expect(typeof category.slug).toBe("string");
