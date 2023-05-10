@@ -68,12 +68,12 @@ describe("/api/reviews/:review_id", () => {
         });
       });
   });
-  test("GET - status: 400 - gives correct error when given an invalid review_id number", () => {
+  test("GET - status: 404 - gives correct error when review_id not found", () => {
     return request(app)
       .get("/api/review/666")
       .expect(404)
       .then((result) => {
-        expect(result.body.msg).toEqual("Invalid review_id");
+        expect(result.body.msg).toEqual("review_id not found");
       });
   });
   test("GET - status: 400 - gives correct error when given an invalid review_id data type", () => {
