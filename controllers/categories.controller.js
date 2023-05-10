@@ -2,6 +2,7 @@ const {
   modelGetCategories,
   modelGetEndpoints,
   modelGetReview,
+  modelGetReviews,
 } = require("../models/categories.model.js");
 
 exports.getCategories = (req, res, next) => {
@@ -25,9 +26,21 @@ exports.getEndpoints = (req, res, next) => {
 };
 
 exports.getReview = (req, res, next) => {
-  modelGetReview(req.params.review_id).then((review) => {
-    res.status(200).send({ review });
-  }).catch((err) => {
-    next(err);
-  });
+  modelGetReview(req.params.review_id)
+    .then((review) => {
+      res.status(200).send({ review });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.getReviews = (req, res, next) => {
+  modelGetReviews()
+    .then((reviews) => {
+      res.status(200).send({ reviews });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
