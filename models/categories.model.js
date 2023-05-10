@@ -20,7 +20,7 @@ exports.modelGetReview = (reviewID) => {
     .query(`SELECT * FROM reviews WHERE review_id = $1`, [reviewID])
     .then((result) => {
       if (result.rows.length === 0) {
-        return Promise.reject({ status: 400, msg: "Invalid review_id" });
+        return Promise.reject({ status: 404, msg: "Invalid review_id" });
       }
 
       return result.rows[0];

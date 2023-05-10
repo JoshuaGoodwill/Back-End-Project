@@ -55,7 +55,7 @@ describe('/api/reviews/:review_id', () => {
     test('GET - status: 400 - gives correct error when given an invalid review_id number', () => {
         return request(app)
         .get("/api/review/666")
-        .expect(400)
+        .expect(404)
         .then((result) => {
             expect(result.body.msg).toEqual("Invalid review_id")
         });
