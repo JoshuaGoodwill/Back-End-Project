@@ -42,3 +42,38 @@ describe('/api', () => {
         })
     });
 });
+
+describe('/api/reviews/:review_id', () => {
+    test('GET - status: 200 - responds with correct review object', () => {
+        return request(app)
+        .get("/api/review/3")
+        .expect(200)
+        .then((result) => {
+            expect(result.body.review).toEqual({ review_id: 3, title: "Ultimate Werewolf", category: "social deduction", designer: "Akihisa Okui", owner: "bainesface", review_body: "We couldn't find the werewolf!", review_img_url: "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?w=700&h=700", created_at: "2021-01-18T10:01:41.251Z", votes: 5});
+        })
+    });
+    test('GET - status: 400 - gives correct error when given an invalid review_id number', () => {
+        return request(app)
+        .get("/api/review/666")
+        .expect(404)
+        .then((result) => {
+            expect(result.body.msg).toEqual("Invalid review_id")
+        });
+    });
+    test('GET - status: 400 - gives correct error when given an invalid review_id data type', () => {
+        return request(app)
+        .get("/api/review/woof")
+        .expect(400)
+        .then((result) => {
+            expect(result.body.msg).toEqual("Invalid review_id")
+        });
+    });
+    test('GET - status: 400 - gives correct error when given an integer overflow', () => {
+        return request(app)
+        .get("/api/review/124124124124124")
+        .expect(400)
+        .then((result) => {
+            expect(result.body.msg).toEqual("Invalid review_id")
+        });
+    });
+});
