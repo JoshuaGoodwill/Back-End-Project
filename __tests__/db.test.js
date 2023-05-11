@@ -73,7 +73,7 @@ describe("/api/reviews/:review_id", () => {
       .get("/api/review/666")
       .expect(404)
       .then((result) => {
-        expect(result.body.msg).toEqual("review_id not found");
+        expect(result.body.msg).toBe("review_id not found");
       });
   });
   test("GET - status: 400 - gives correct error when given an invalid review_id data type", () => {
@@ -81,7 +81,7 @@ describe("/api/reviews/:review_id", () => {
       .get("/api/review/woof")
       .expect(400)
       .then((result) => {
-        expect(result.body.msg).toEqual("Invalid review_id");
+        expect(result.body.msg).toBe("Invalid endpoint input");
       });
   });
   test("GET - status: 400 - gives correct error when given an integer overflow", () => {
@@ -89,7 +89,7 @@ describe("/api/reviews/:review_id", () => {
       .get("/api/review/124124124124124")
       .expect(400)
       .then((result) => {
-        expect(result.body.msg).toEqual("Invalid review_id");
+        expect(result.body.msg).toBe("Invalid endpoint input");
       });
   });
 });
@@ -125,6 +125,44 @@ describe("/api/reviews", () => {
           descending: true,
           coerce: true,
         });
+      });
+  });
+});
+
+describe("/api/reviews/review:id/comments", () => {
+  test("GET - status: 200 - should return correct array of comments objects", () => {
+    return request(app)
+      .get("/api/reviews/2/comments")
+      .expect(200)
+      .then((result) => {
+        expect(result.body.comments.length).toBeGreaterThan(0);
+        result.body.comments.forEach((comment) => {
+          expect(Object.keys(comment).length).toBe(6);
+          expect(typeof comment.comment_id).toBe("number");
+          expect(typeof comment.votes).toBe("number");
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.body).toBe("string");
+          expect(typeof comment.review_id).toBe("number");
+        });
+      });
+  });
+
+  test("GET - status: 404 - should return message when no comments exist but review_id is valid", () => {
+    return request(app)
+      .get("/api/reviews/5/comments")
+      .expect(404)
+      .then((result) => {
+        expect(result.body.msg).toBe("No comments found");
+      });
+  });
+
+  test("GET - status: 404 - should return message when no comments exist but review_id is valid", () => {
+    return request(app)
+      .get("/api/reviews/woof/comments")
+      .expect(400)
+      .then((result) => {
+        expect(result.body.msg).toBe("Invalid endpoint input");
       });
   });
 });

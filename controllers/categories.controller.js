@@ -3,6 +3,7 @@ const {
   modelGetEndpoints,
   modelGetReview,
   modelGetReviews,
+  modelGetComments,
 } = require("../models/categories.model.js");
 
 exports.getCategories = (req, res, next) => {
@@ -39,6 +40,16 @@ exports.getReviews = (req, res, next) => {
   modelGetReviews()
     .then((reviews) => {
       res.status(200).send({ reviews });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.getComments = (req, res, next) => {
+  modelGetComments(req.params.review_id)
+    .then((comments) => {
+      res.status(200).send({ comments });
     })
     .catch((err) => {
       next(err);
