@@ -143,21 +143,30 @@ describe("/api/reviews/review:id/comments", () => {
           expect(typeof comment.created_at).toBe("string");
           expect(typeof comment.author).toBe("string");
           expect(typeof comment.body).toBe("string");
-          expect(typeof comment.review_id).toBe("number");
+          expect(comment.review_id).toBe(2);
         });
       });
   });
 
-  test("GET - status: 404 - should return message when no comments exist but review_id is valid", () => {
+  test("GET - status: 200 - should return empty array when no comments exist but review_id is valid", () => {
     return request(app)
       .get("/api/reviews/5/comments")
-      .expect(404)
+      .expect(200)
       .then((result) => {
-        expect(result.body.msg).toBe("No comments found");
+        expect(result.body.comments).toEqual([]);
       });
   });
 
-  test("GET - status: 404 - should return message when no comments exist but review_id is valid", () => {
+  test("GET - status: 404 - should return message when review_id isn't found", () => {
+    return request(app)
+      .get("/api/reviews/321/comments")
+      .expect(404)
+      .then((result) => {
+        expect(result.body.msg).toBe("review_id not found");
+      });
+  });
+
+  test("GET - status: 400 - should return message when review_id isn't valid", () => {
     return request(app)
       .get("/api/reviews/woof/comments")
       .expect(400)
