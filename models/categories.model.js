@@ -40,3 +40,27 @@ exports.modelGetReviews = () => {
       return result.rows;
     });
 };
+
+exports.modelGetComments = (reviewID) => {
+
+  return db
+  .query(`SELECT * FROM reviews WHERE review_id = $1`, [reviewID])
+  .then((result) => {
+    if (result.rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "review_id not found" });
+    } else {
+    return db
+      .query(
+        `SELECT comment_id, comments.votes, comments.created_at, comments.author, comments.body, comments.review_id 
+    FROM comments 
+    LEFT JOIN reviews ON comments.review_id=reviews.review_id 
+    WHERE comments.review_id = $1
+    ORDER BY comments.created_at;`,
+        [reviewID]
+      )
+      .then((result) => {
+        return result.rows;
+      });
+    }
+  });
+};

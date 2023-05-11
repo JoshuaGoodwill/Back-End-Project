@@ -4,6 +4,7 @@ const {
   getEndpoints,
   getReview,
   getReviews,
+  getComments,
 } = require("./controllers/categories.controller");
 const app = express();
 
@@ -15,9 +16,11 @@ app.get("/api/review/:review_id", getReview);
 
 app.get("/api/reviews", getReviews);
 
+app.get("/api/reviews/:review_id/comments", getComments)
+
 app.use((err, req, res, next) => {
   if (err.code === "22P02" || err.code === "22003") {
-    res.status(400).send({ msg: "Invalid review_id" });
+    res.status(400).send({ msg: "Invalid endpoint input" });
   } else {
     next(err);
   }
