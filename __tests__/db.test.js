@@ -174,4 +174,73 @@ describe("/api/reviews/review:id/comments", () => {
         expect(result.body.msg).toBe("Invalid endpoint input");
       });
   });
+
+  test("POST - status: 201 - should add comment and return the new comment object", () => {
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send({
+        username: "mallionaire",
+        body: "How did the farmer find his lost cow? He tractor down.",
+      })
+      .expect(201)
+      .then((result) => {
+        expect(result.body.comment.review_id).toBe(1);
+        expect(result.body.comment.author).toBe("mallionaire");
+        expect(result.body.comment.body).toBe("How did the farmer find his lost cow? He tractor down.");
+        expect(typeof result.body.comment.comment_id).toBe("number");
+        expect(typeof result.body.comment.votes).toBe("number");
+        expect(typeof result.body.comment.created_at).toBe("string");
+      });
+  });
+
+  test("POST - status: 404 - should return message when review_id isn't found", () => {
+    return request(app)
+    .post("/api/reviews/123/comments")
+      .send({
+        username: "mallionaire",
+        body: "How did the farmer find his lost cow? He tractor down.",
+      })
+      .expect(404)
+      .then((result) => {
+        expect(result.body.msg).toBe("review_id not found")
+      })
+  });
+
+  test("POST - status: 404 - should return message when username isn't found", () => {
+    return request(app)
+    .post("/api/reviews/1/comments")
+      .send({
+        username: "josh",
+        body: "How did the farmer find his lost cow? He tractor down.",
+      })
+      .expect(404)
+      .then((result) => {
+        expect(result.body.msg).toBe("username not found")
+      })
+  });
+
+  test("POST - status: 400 - should return message when input data is missing", () => {
+    return request(app)
+    .post("/api/reviews/1/comments")
+      .send({
+        username: "mallionaire"
+      })
+      .expect(400)
+      .then((result) => {
+        expect(result.body.msg).toBe("Input data missing")
+      })
+  });
+
+  test("POST - status: 400 - should return message when input data is missing", () => {
+    return request(app)
+    .post("/api/reviews/1/comments")
+      .send({
+        username: "",
+        body: "body"
+      })
+      .expect(400)
+      .then((result) => {
+        expect(result.body.msg).toBe("Input data missing")
+      })
+  });
 });

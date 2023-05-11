@@ -4,6 +4,7 @@ const {
   modelGetReview,
   modelGetReviews,
   modelGetComments,
+  modelPostComment,
 } = require("../models/categories.model.js");
 
 exports.getCategories = (req, res, next) => {
@@ -50,6 +51,18 @@ exports.getComments = (req, res, next) => {
   modelGetComments(req.params.review_id)
     .then((comments) => {
       res.status(200).send({ comments });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postComment = (req, res, next) => {
+  const review_id = req.params.review_id;
+  const { username, body } = req.body;
+  modelPostComment(review_id, username, body)
+    .then((comment) => {
+      res.status(201).send({ comment });
     })
     .catch((err) => {
       next(err);
