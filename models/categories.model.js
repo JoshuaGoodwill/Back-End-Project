@@ -42,7 +42,6 @@ exports.modelGetReviews = () => {
 };
 
 exports.modelGetComments = (reviewID) => {
-
   return db
   .query(`SELECT * FROM reviews WHERE review_id = $1`, [reviewID])
   .then((result) => {
@@ -64,3 +63,34 @@ exports.modelGetComments = (reviewID) => {
     }
   });
 };
+
+exports.modelPostComment = (reviewID, username, body) => {
+  return db
+  .query(`SELECT * FROM reviews WHERE review_id = $1`, [reviewID])
+  .then((result) => {
+    if (result.rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "review_id not found" });
+    } else if(!username || !body || username === "" || body === ""){
+      return Promise.reject({status: 400, msg: "Input data missing"});
+    } else {
+      return db
+      .query(`SELECT * FROM users WHERE username = $1`, [username])
+      .then((result) => {
+        if(result.rows.length === 0){
+          return Promise.reject({status: 404, msg: "username not found"})
+        } else {
+          return db
+          .query(`
+          INSERT INTO comments 
+          (body, review_id, author) 
+          VALUES 
+          ( $1, $2, $3) 
+          RETURNING *;`, [body, reviewID, username])
+          .then((result) => {
+            return result.rows[0];
+          })
+        }
+      })
+    }
+  });
+}
