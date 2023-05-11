@@ -71,8 +71,6 @@ exports.modelPostComment = (reviewID, username, body) => {
     if (result.rows.length === 0) {
       return Promise.reject({ status: 404, msg: "review_id not found" });
     } else if(!username || !body || username === "" || body === ""){
-      console.log("in model")
-      console.log(`username: ${username}, body: ${body}`);
       return Promise.reject({status: 400, msg: "Input data missing"});
     } else {
       return db
