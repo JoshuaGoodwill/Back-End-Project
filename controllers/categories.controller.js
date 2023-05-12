@@ -5,6 +5,7 @@ const {
   modelGetReviews,
   modelGetComments,
   modelPostComment,
+  modelPatchReview,
 } = require("../models/categories.model.js");
 
 exports.getCategories = (req, res, next) => {
@@ -29,6 +30,16 @@ exports.getEndpoints = (req, res, next) => {
 
 exports.getReview = (req, res, next) => {
   modelGetReview(req.params.review_id)
+    .then((review) => {
+      res.status(200).send({ review });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.patchReview = (req, res, next) => {
+  modelPatchReview(req.params.review_id, req.body.inc_votes)
     .then((review) => {
       res.status(200).send({ review });
     })

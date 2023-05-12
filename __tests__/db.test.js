@@ -51,7 +51,7 @@ describe("/api", () => {
 describe("/api/reviews/:review_id", () => {
   test("GET - status: 200 - responds with correct review object", () => {
     return request(app)
-      .get("/api/review/3")
+      .get("/api/reviews/3")
       .expect(200)
       .then((result) => {
         expect(result.body.review).toEqual({
@@ -70,7 +70,7 @@ describe("/api/reviews/:review_id", () => {
   });
   test("GET - status: 404 - gives correct error when review_id not found", () => {
     return request(app)
-      .get("/api/review/666")
+      .get("/api/reviews/666")
       .expect(404)
       .then((result) => {
         expect(result.body.msg).toBe("review_id not found");
@@ -78,7 +78,7 @@ describe("/api/reviews/:review_id", () => {
   });
   test("GET - status: 400 - gives correct error when given an invalid review_id data type", () => {
     return request(app)
-      .get("/api/review/woof")
+      .get("/api/reviews/woof")
       .expect(400)
       .then((result) => {
         expect(result.body.msg).toBe("Invalid endpoint input");
@@ -86,10 +86,71 @@ describe("/api/reviews/:review_id", () => {
   });
   test("GET - status: 400 - gives correct error when given an integer overflow", () => {
     return request(app)
-      .get("/api/review/124124124124124")
+      .get("/api/reviews/124124124124124")
       .expect(400)
       .then((result) => {
         expect(result.body.msg).toBe("Invalid endpoint input");
+      });
+  });
+
+  test("PATCH - status: 200 - increases votes by correct amount", () => {
+    return request(app)
+      .patch("/api/reviews/3")
+      .send({ inc_votes: 5 })
+      .expect(200)
+      .then((result) => {
+        expect(result.body.review).toEqual({
+          review_id: 3,
+          title: "Ultimate Werewolf",
+          category: "social deduction",
+          designer: "Akihisa Okui",
+          owner: "bainesface",
+          review_body: "We couldn't find the werewolf!",
+          review_img_url:
+            "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?w=700&h=700",
+          created_at: "2021-01-18T10:01:41.251Z",
+          votes: 10,
+        });
+      });
+  });
+
+  test("PATCH - status: 400 - gives correct error when not given a number", () => {
+    return request(app)
+      .patch("/api/reviews/3")
+      .send({ inc_votes: "string" })
+      .expect(400)
+      .then((result) => {
+        expect(result.body.msg).toBe("Invalid input");
+      });
+  });
+
+  test("PATCH - status: 400 - gives correct error when not given inc_votes key", () => {
+    return request(app)
+      .patch("/api/reviews/3")
+      .send({ randomKey: 5, secondRandomKey: "string" })
+      .expect(400)
+      .then((result) => {
+        expect(result.body.msg).toBe("Invalid input");
+      });
+  });
+
+  test("PATCH - status: 400 - gives correct error when given an invalid review_id data type", () => {
+    return request(app)
+      .patch("/api/reviews/woof")
+      .send({ inc_votes: 5 })
+      .expect(400)
+      .then((result) => {
+        expect(result.body.msg).toBe("Invalid endpoint input");
+      });
+  });
+
+  test("PATCH - status: 404 - gives correct error when review_id not found", () => {
+    return request(app)
+      .patch("/api/reviews/666")
+      .send({ inc_votes: 5 })
+      .expect(404)
+      .then((result) => {
+        expect(result.body.msg).toBe("review_id not found");
       });
   });
 });
@@ -216,9 +277,9 @@ describe("/api/reviews/review:id/comments", () => {
         expect(typeof result.body.comment.votes).toBe("number");
         expect(typeof result.body.comment.created_at).toBe("string");
 
-        expect(Object.keys(result.body.comment)).not.toContain("a")
-        expect(Object.keys(result.body.comment)).not.toContain("b")
-        expect(Object.keys(result.body.comment)).not.toContain("c")
+        expect(Object.keys(result.body.comment)).not.toContain("a");
+        expect(Object.keys(result.body.comment)).not.toContain("b");
+        expect(Object.keys(result.body.comment)).not.toContain("c");
       });
   });
 
