@@ -114,6 +114,27 @@ describe("/api/reviews/:review_id", () => {
       });
   });
 
+  test("PATCH - status: 200 - decreases votes by correct amount", () => {
+    return request(app)
+      .patch("/api/reviews/3")
+      .send({ inc_votes: -5 })
+      .expect(200)
+      .then((result) => {
+        expect(result.body.review).toEqual({
+          review_id: 3,
+          title: "Ultimate Werewolf",
+          category: "social deduction",
+          designer: "Akihisa Okui",
+          owner: "bainesface",
+          review_body: "We couldn't find the werewolf!",
+          review_img_url:
+            "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?w=700&h=700",
+          created_at: "2021-01-18T10:01:41.251Z",
+          votes: 0,
+        });
+      });
+  });
+
   test("PATCH - status: 400 - gives correct error when not given a number", () => {
     return request(app)
       .patch("/api/reviews/3")
