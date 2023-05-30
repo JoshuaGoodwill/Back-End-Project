@@ -8,7 +8,10 @@ const {
   postComment,
   patchReview,
 } = require("./controllers/categories.controller");
+const cors = require("cors");
 const app = express();
+
+app.use(cors());
 
 app.use(express.json());
 
