@@ -27,6 +27,35 @@ exports.modelGetReview = (reviewID) => {
     });
 };
 
+exports.modelPatchReview = (reviewID, amount) => {
+  let queryOperator = "+";
+  let incAmount = 0;
+  if(typeof amount !== "number") {
+    return Promise.reject({status: 400, msg: "Invalid input"})
+  } else if(amount < 0){
+    incAmount = Math.abs(amount);
+    queryOperator = "-";
+
+    console.log(typeof incAmount, incAmount, queryOperator);
+  } else {
+    incAmount = amount;
+  }
+  return db
+    .query(`SELECT * FROM reviews WHERE review_id = $1`, [reviewID])
+    .then((result) => {
+      if (result.rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "review_id not found" });
+      }
+
+      return db
+      .query(`UPDATE reviews SET votes = votes ${queryOperator} $1 WHERE review_id=$2 RETURNING *;`, [incAmount, reviewID])
+      .then((result) => {
+        return result.rows[0];
+      })
+      
+    });
+}
+
 exports.modelGetReviews = () => {
   return db
     .query(
