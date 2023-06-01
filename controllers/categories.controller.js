@@ -6,6 +6,7 @@ const {
   modelGetComments,
   modelPostComment,
   modelPatchReview,
+  modelGetUsers,
 } = require("../models/categories.model.js");
 
 exports.getCategories = (req, res, next) => {
@@ -74,6 +75,16 @@ exports.postComment = (req, res, next) => {
   modelPostComment(review_id, username, body)
     .then((comment) => {
       res.status(201).send({ comment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.getUsers = (req, res, next) => {
+  modelGetUsers()
+    .then((users) => {
+      res.status(200).send({ users });
     })
     .catch((err) => {
       next(err);
