@@ -85,7 +85,7 @@ exports.modelGetComments = (reviewID) => {
     FROM comments 
     LEFT JOIN reviews ON comments.review_id=reviews.review_id 
     WHERE comments.review_id = $1
-    ORDER BY comments.created_at;`,
+    ORDER BY comments.created_at DESC;`,
             [reviewID]
           )
           .then((result) => {
